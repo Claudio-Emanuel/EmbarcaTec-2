@@ -8,13 +8,14 @@
 #include "lwip/altcp_tls.h"
 #include "example_http_client_util.h"
 
-// ======= CONFIGURAÇÕES ======= //
-#define HOST "192.168.2.104" // Substitua pelo IP do servidor
+// ======================== CONFIGURAÇÕES ======================= //
+#define HOST "192.168.2.104" // 
 #define PORT 5000
 #define INTERVALO_MS 500
 #define BUTTON_A 5
+#define BUTTON_B 6
 #define LED_RED 13
-// ============================= //
+// ============================================================= //
 
 int main()
 {

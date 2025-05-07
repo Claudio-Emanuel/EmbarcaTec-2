@@ -14,15 +14,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 100px auto;
       border-radius: 20px;
       transition: background-color 0.3s ease;
     }
   </style>
 </head>
 <body>
+  <div style="display: flex;flex-direction: row;justify-content: space-around;">
+    <div>
+      <h5>Botão A</h5>
+      <div id="status-box">OFF</div>
+    </div>
+    <div>
+      <h5>Botão B</h5>
+      <div id="status-box">OFF</div>
+    </div>
+        
+  </div>
 
-  <div id="status-box">OFF</div>
 
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
