@@ -1,20 +1,18 @@
-/**
- * Cliente HTTP para Raspberry Pi Pico W
- */
 #include <stdio.h>
 #include "pico/stdio.h"
 #include "pico/cyw43_arch.h"
 #include "pico/async_context.h"
 #include "lwip/altcp_tls.h"
 #include "example_http_client_util.h"
-
-// ======================== CONFIGURAÇÕES ======================= //
-#define HOST "192.168.2.104" // 
+#include "buzzer.c"
+// ======================== CONFIG============================== //
+#define HOST "192.168.143.156" // IP DA REDE
 #define PORT 5000
-#define INTERVALO_MS 500
-#define BUTTON_A 5
-#define BUTTON_B 6
-#define LED_RED 13
+#define INTERVALO_MS 500 //INTERVALO PARA ENVIAR MENSAGEM
+#define BUTTON_A 5 //DEFINICAO DO BOTAO A
+#define BUTTON_B 6 //DEFINICAO DO BOTAO B
+#define LED_RED 13 //DEFINICAO DO LED VERMELHO
+#define LED_BLUE 12 //DEFINICAO DO LED_AZUL
 // ============================================================= //
 
 int main()
@@ -26,10 +24,18 @@ int main()
     gpio_init(BUTTON_A);
     gpio_set_dir(BUTTON_A, GPIO_IN);
     gpio_pull_up(BUTTON_A);
+    
+    gpio_init(BUTTON_B);
+    gpio_set_dir(BUTTON_B, GPIO_IN);
+    gpio_pull_up(BUTTON_B);
 
+    
     // Conifguração do Led
     gpio_init(LED_RED);
     gpio_set_dir(LED_RED, GPIO_OUT);
+
+    gpio_init(LED_BLUE);
+    gpio_set_dir(LED_BLUE, GPIO_OUT);
 
     printf("\nIniciando cliente HTTP...\n");
 
@@ -51,7 +57,8 @@ int main()
     printf("Conectado! IP: %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
 
     // Loop Principal
-    int button_state = 1; // Variável para controlar o estado do botão (1 = solto, 0 = pressionado)
+    int button_state_a = 1; // Variável para controlar o estado do botão (1 = solto, 0 = pressionado)
+    int button_state_b = 1; // Variável para controlar o estado do botão (1 = solto, 0 = pressionado)
 
     while (1) {
         const char *path = NULL;
@@ -59,20 +66,40 @@ int main()
         // Se o botão A for apertado
         if (gpio_get(BUTTON_A) == 0)
         {
-            if (button_state == 1)
+            if (button_state_a == 1)
             {                    // Se o botão estava solto e agora foi pressionado
-                path = "/CLICK"; // Envia a mensagem "CLICK"
+                path = "/CLICK_A"; // Envia a mensagem "CLICK"
                 gpio_put(LED_RED, 1);
-                button_state = 0; // Atualiza o estado para pressionado
+                buzzer_alert_tone();
+                button_state_a = 0; // Atualiza o estado para pressionado
             }
         }
         else
         {
-            if (button_state == 0)
+            if (button_state_a == 0)
             {                    // Se o botão estava pressionado e agora foi solto
-                path = "/SOLTO"; // Envia a mensagem "SOLTO"
+                path = "/SOLTO_A"; // Envia a mensagem "SOLTO"
                 gpio_put(LED_RED, 0);
-                button_state = 1; // Atualiza o estado para solto
+                button_state_a = 1; // Atualiza o estado para solto
+            }
+        }
+        if (gpio_get(BUTTON_B) == 0)
+        {
+            if (button_state_b == 1)
+            {                    // Se o botão estava solto e agora foi pressionado
+                path = "/CLICK_B"; // Envia a mensagem "CLICK"
+                gpio_put(LED_BLUE, 1);
+                buzzer_alert_tone();
+                button_state_b = 0; // Atualiza o estado para pressionado
+            }
+        }
+        else
+        {
+            if (button_state_b == 0)
+            {                    // Se o botão estava pressionado e agora foi solto
+                path = "/SOLTO_B"; // Envia a mensagem "SOLTO"
+                gpio_put(LED_BLUE, 0);
+                button_state_b = 1; // Atualiza o estado para solto
             }
         }
 

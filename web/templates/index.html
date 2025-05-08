@@ -4,7 +4,20 @@
   <meta charset="UTF-8">
   <title>Status Box</title>
   <style>
-    #status-box {
+    #status-box-1 {
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 20px;
+      transition: background-color 0.3s ease;
+    }
+    #status-box-2 {
       width: 200px;
       height: 200px;
       background-color: red;
@@ -23,11 +36,11 @@
   <div style="display: flex;flex-direction: row;justify-content: space-around;">
     <div>
       <h5>Botão A</h5>
-      <div id="status-box">OFF</div>
+      <div id="status-box-1">OFF</div>
     </div>
     <div>
       <h5>Botão B</h5>
-      <div id="status-box">OFF</div>
+      <div id="status-box-2">OFF</div>
     </div>
         
   </div>
@@ -37,26 +50,36 @@
   <script>
     const socket = io();
 
-    const box = document.getElementById('status-box');
-    let isOn = false;
+    const boxA = document.getElementById('status-box-1');
+    const boxB = document.getElementById('status-box-2');
+    let isOn_A = false;
+    let isOn_B = false;
 
     socket.on('connect', () => {
       console.log('Conectado ao servidor via Socket.IO');
     });
 
     socket.on('command', (data) => {
-      if (data.action === 'click') {
-        if (!isOn) {  // Se o estado for OFF, muda para ON
+      switch (data.action){
+        case 'click-a':
           box.style.backgroundColor = 'green';
           box.textContent = 'ON';
-          isOn = true;
-        }
-      } else if (data.action === 'solto') {
-        if (isOn) {  // Se o botão foi solto, volta para OFF
-          box.style.backgroundColor = 'red';
-          box.textContent = 'OFF';
-          isOn = false;
-        }
+          isOn_A = true;
+        
+          case 'solto_a':
+            box.style.backgroundColor = 'red';
+            box.textContent = 'OFF';
+            isOn_A = false;
+          
+          case 'click-b':
+            box.style.backgroundColor = 'green';
+            box.textContent = 'ON';
+            isOn_B = true;
+
+          case 'solto_b':
+            box.style.backgroundColor = 'red';
+            box.textContent = 'OFF';
+            isOn_B = false;
       }
     });
   </script>

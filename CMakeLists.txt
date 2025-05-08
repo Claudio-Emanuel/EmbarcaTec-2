@@ -22,6 +22,7 @@ set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
+
 # ====================================================================================
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
@@ -69,6 +70,8 @@ target_link_libraries(picow_http_client
         pico_stdlib
         pico_cyw43_arch_lwip_threadsafe_background
         example_lwip_http_util
+        hardware_pwm
+        hardware_clocks
         )
 
 # Add the standard include files to the build
