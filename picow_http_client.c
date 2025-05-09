@@ -15,8 +15,6 @@
 #define LED_BLUE 12 //DEFINICAO DO LED_AZUL
 #define JOY_X 26 //DEFINICAO DO EIXO X DO JOYSTICK
 #define JOY_Y 27 //DEFINICAO DO EIXO Y DO JOYSTICK
-#define MAX_ADC 3000 //VALOR MAXIMO DO ADC
-#define MIN_ADC 1000 //VALOR MINIMO DO ADC
 #define DEADZONE 300 //VALOR DA ZONA MORTA DO ADC
 // ====================================================================== //
 // ========================INICIO DO MAIN================================ //
@@ -78,8 +76,54 @@ int main()
 
         adc_select_input(0); // Seleciona o canal 2 do ADC (GPIO 27)
         uint adc_y_raw= adc_read(); // Lê o valor do ADC
+        int delta_x =  -(2048 - adc_x_raw) ;
+        int delta_y = adc_y_raw - 2048;
+        // Imprime os valores lidos do ADC
+        const char *direction = NULL;
 
+        // Verifica a direção do joystick
+        if (abs(delta_x) < DEADZONE && abs(delta_y) > DEADZONE) {
+            direction = (delta_y < 0) ? "/SUL" : "/NORTE";
+        }else if (abs(delta_x) == DEADZONE && abs(delta_y) == DEADZONE) {
+            direction = "/CENTRO";
+        }else if (abs(delta_y) < DEADZONE && abs(delta_x) > DEADZONE) {
+            direction = (delta_x > 0) ? "/LESTE" : "/OESTE";
+        } else if (delta_x > DEADZONE && delta_y > -DEADZONE) {
+            direction = "/NORDESTE";
+        } else if (delta_x > DEADZONE && delta_y < DEADZONE) {
+            direction = "/SUDESTE";
+        } else if (delta_x < -DEADZONE && delta_y > -DEADZONE) {
+            direction = "/NOROESTE";
+        } else if (delta_x < -DEADZONE && delta_y < DEADZONE) {
+            direction = "/SUDOESTE";
+        }
+        // Se a direção foi detectada, envia o comando    
+        if (direction != NULL)
+        {
+            EXAMPLE_HTTP_REQUEST_T req = {0};
+            req.hostname = HOST;
+            req.url = direction;
+            req.port = PORT;
+            req.headers_fn = http_client_header_print_fn;
+            req.recv_fn = http_client_receive_print_fn;
 
+            printf("Enviando direção: %s\n", direction);
+            int result = http_client_request_sync(cyw43_arch_async_context(), &req);
+
+            if (result == 0)
+            {
+                printf("Direção enviada com sucesso!\n");
+            }
+            else
+            {
+                printf("Erro ao enviar direção: %d\n", result);
+            }
+
+            sleep_ms(20);
+        }
+
+        // Verifica o estado dos botões
+        // Inicializa a variável path como NULL
         const char *path = NULL;
 
         // Se o botão A for apertado

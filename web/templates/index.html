@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Status Box</title>
+  <title>Status e Rosa dos Ventos</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <style>
-    #status-box-1 {
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: white;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Painéis dos botões */
+    .painel-botoes {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 50px;
+      margin-bottom: 40px;
+    }
+
+    .botao-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .status-box {
       width: 200px;
       height: 200px;
       background-color: #ff6f00;
@@ -17,70 +44,111 @@
       border-radius: 20px;
       transition: background-color 0.3s ease;
     }
-    #status-box-2 {
-      width: 200px;
-      height: 200px;
-      background-color: #ff6f00;
-      color: white;
-      font-size: 2em;
-      font-weight: bold;
+
+    /* Rosa dos ventos */
+    .rosa-dos-ventos {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+      text-align: center;
+    }
+
+    .seta {
       display: flex;
-      justify-content: center;
       align-items: center;
-      border-radius: 20px;
-      transition: background-color 0.3s ease;
+      justify-content: center;
+      background-color: #333;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.2em;
+      transition: background-color 0.2s;
+    }
+
+    .seta.ativa {
+      background-color: #007bff;
+    }
+
+    .centro {
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-  <div style="display: flex;flex-direction: row;justify-content: space-around;">
-    <div style="display: flex;flex-direction: column;align-items: center;">
+
+  <!-- Painéis dos botões -->
+  <div class="painel-botoes">
+    <div class="botao-container">
       <h5>Botão A</h5>
-      <div id="status-box-1">SOLTO</div>
+      <div id="status-box-1" class="status-box">SOLTO</div>
     </div>
-    <div style="display: flex;flex-direction: column;align-items: center;">
+    <div class="botao-container">
       <h5>Botão B</h5>
-      <div id="status-box-2">SOLTO</div>
+      <div id="status-box-2" class="status-box">SOLTO</div>
     </div>
-        
   </div>
 
+  <!-- Rosa dos Ventos -->
+  <div class="rosa-dos-ventos">
+    <div id="noroeste" class="seta">NO</div>
+    <div id="norte" class="seta">N</div>
+    <div id="nordeste" class="seta">NE</div>
+    <div id="oeste" class="seta">O</div>
+    <div class="seta centro">•</div>
+    <div id="leste" class="seta">L</div>
+    <div id="sudoeste" class="seta">SO</div>
+    <div id="sul" class="seta">S</div>
+    <div id="sudeste" class="seta">SE</div>
+  </div>
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
     const socket = io();
 
     const boxA = document.getElementById('status-box-1');
     const boxB = document.getElementById('status-box-2');
-    let isOn_A = false;
-    let isOn_B = false;
+
+    const direcoes = ['norte', 'sul', 'leste', 'oeste', 'nordeste', 'noroeste', 'sudeste', 'sudoeste'];
 
     socket.on('connect', () => {
       console.log('Conectado ao servidor via Socket.IO');
     });
 
     socket.on('command', (data) => {
-      switch (data.action){
+      console.log('Ação recebida:', data.action);
+
+      // Atualiza status dos botões
+      switch (data.action) {
         case 'click_a':
           boxA.style.backgroundColor = 'blue';
           boxA.textContent = 'PRESS';
-          isOn_A = true;
-          break;
-          case 'solto_a':
-            boxA.style.backgroundColor = 'orange';
-            boxA.textContent = 'SOLTO';
-            isOn_A = false;
-            break;
-          case 'click_b':
-            boxB.style.backgroundColor = 'blue';
-            boxB.textContent = 'PRESS';
-            isOn_B = true;
-            break;
-          case 'solto_b':
-            boxB.style.backgroundColor = 'orange';
-            boxB.textContent = 'SOLTO';
-            isOn_B = false;
-            break;
+          return;
+        case 'solto_a':
+          boxA.style.backgroundColor = 'orange';
+          boxA.textContent = 'SOLTO';
+          return;
+        case 'click_b':
+          boxB.style.backgroundColor = 'blue';
+          boxB.textContent = 'PRESS';
+          return;
+        case 'solto_b':
+          boxB.style.backgroundColor = 'orange';
+          boxB.textContent = 'SOLTO';
+          return;
+      }
+
+      // Atualiza rosa dos ventos
+      direcoes.forEach(dir => {
+        const el = document.getElementById(dir);
+        if (el) el.classList.remove('ativa');
+      });
+
+      const dir = data.action.toLowerCase();
+      const el = document.getElementById(dir);
+      if (el) el.classList.add('ativa');
+
+      // Remove destaque após 500ms (opcional)
+      if (el) {
+        setTimeout(() => el.classList.remove('ativa'), 500);
       }
     });
   </script>

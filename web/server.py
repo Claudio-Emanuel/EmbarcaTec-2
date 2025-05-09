@@ -37,6 +37,61 @@ def solto_b():
     socketio.emit('command', {'action': 'solto_b'})  # Envia comando para OFF
     return 'solto_b command sent', 200
 
+@app.route('/CENTRO', methods=['GET', 'POST'])
+def centro():
+    print("Joystick: CENTRO")
+    socketio.emit('command', {'action': 'centro'})
+    return 'CENTRO command sent', 200
+
+@app.route('/NORTE', methods=['GET', 'POST'])
+def norte():
+    print("Joystick: NORTE")
+    socketio.emit('command', {'action': 'norte'})
+    return 'NORTE command sent', 200
+
+@app.route('/SUL', methods=['GET', 'POST'])
+def sul():
+    print("Joystick: SUL")
+    socketio.emit('command', {'action': 'sul'})
+    return 'SUL command sent', 200
+
+@app.route('/LESTE', methods=['GET', 'POST'])
+def leste():
+    print("Joystick: LESTE")
+    socketio.emit('command', {'action': 'leste'})
+    return 'LESTE command sent', 200
+
+@app.route('/OESTE', methods=['GET', 'POST'])
+def oeste():
+    print("Joystick: OESTE")
+    socketio.emit('command', {'action': 'oeste'})
+    return 'OESTE command sent', 200
+
+@app.route('/NORDESTE', methods=['GET', 'POST'])
+def nordeste():
+    print("Joystick: NORDESTE")
+    socketio.emit('command', {'action': 'nordeste'})
+    return 'NORDESTE command sent', 200
+
+@app.route('/SUDESTE', methods=['GET', 'POST'])
+def sudeste():
+    print("Joystick: SUDESTE")
+    socketio.emit('command', {'action': 'sudeste'})
+    return 'SUDESTE command sent', 200
+
+@app.route('/NOROESTE', methods=['GET', 'POST'])
+def noroeste():
+    print("Joystick: NOROESTE")
+    socketio.emit('command', {'action': 'noroeste'})
+    return 'NOROESTE command sent', 200
+
+@app.route('/SUDOESTE', methods=['GET', 'POST'])
+def sudoeste():
+    print("Joystick: SUDOESTE")
+    socketio.emit('command', {'action': 'sudoeste'})
+    return 'SUDOESTE command sent', 200
+
+
 # Ponto de entrada principal da aplicação
 if __name__ == '__main__':
     # Inicia o servidor Flask com suporte a WebSockets
