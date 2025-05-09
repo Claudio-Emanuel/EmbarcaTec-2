@@ -42,6 +42,7 @@ pico_mirrored_target_link_libraries(example_lwip_http_util INTERFACE
         pico_lwip_http
         pico_lwip_mbedtls
         pico_mbedtls
+        hardware_adc
         )
 target_include_directories(example_lwip_http_util INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}
@@ -70,8 +71,7 @@ target_link_libraries(picow_http_client
         pico_stdlib
         pico_cyw43_arch_lwip_threadsafe_background
         example_lwip_http_util
-        hardware_pwm
-        hardware_clocks
+        hardware_adc
         )
 
 # Add the standard include files to the build
@@ -82,7 +82,7 @@ target_include_directories(picow_http_client PRIVATE
 
 # Add any user requested libraries
 target_link_libraries(picow_http_client 
-        
+        hardware_adc
         )
 
 pico_add_extra_outputs(picow_http_client)
@@ -104,6 +104,7 @@ target_include_directories(picow_http_client_verify PRIVATE
 target_link_libraries(picow_http_client_verify
         pico_cyw43_arch_lwip_threadsafe_background
         example_lwip_http_util
+        hardware_adc
         pico_stdlib
         )
 pico_add_extra_outputs(picow_http_client_verify)

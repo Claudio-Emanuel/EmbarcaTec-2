@@ -7,7 +7,7 @@
     #status-box-1 {
       width: 200px;
       height: 200px;
-      background-color: red;
+      background-color: #ff6f00;
       color: white;
       font-size: 2em;
       font-weight: bold;
@@ -20,7 +20,7 @@
     #status-box-2 {
       width: 200px;
       height: 200px;
-      background-color: red;
+      background-color: #ff6f00;
       color: white;
       font-size: 2em;
       font-weight: bold;
@@ -34,13 +34,13 @@
 </head>
 <body>
   <div style="display: flex;flex-direction: row;justify-content: space-around;">
-    <div>
+    <div style="display: flex;flex-direction: column;align-items: center;">
       <h5>Botão A</h5>
-      <div id="status-box-1">OFF</div>
+      <div id="status-box-1">SOLTO</div>
     </div>
-    <div>
+    <div style="display: flex;flex-direction: column;align-items: center;">
       <h5>Botão B</h5>
-      <div id="status-box-2">OFF</div>
+      <div id="status-box-2">SOLTO</div>
     </div>
         
   </div>
@@ -61,25 +61,26 @@
 
     socket.on('command', (data) => {
       switch (data.action){
-        case 'click-a':
-          box.style.backgroundColor = 'green';
-          box.textContent = 'ON';
+        case 'click_a':
+          boxA.style.backgroundColor = 'blue';
+          boxA.textContent = 'PRESS';
           isOn_A = true;
-        
+          break;
           case 'solto_a':
-            box.style.backgroundColor = 'red';
-            box.textContent = 'OFF';
+            boxA.style.backgroundColor = 'orange';
+            boxA.textContent = 'SOLTO';
             isOn_A = false;
-          
-          case 'click-b':
-            box.style.backgroundColor = 'green';
-            box.textContent = 'ON';
+            break;
+          case 'click_b':
+            boxB.style.backgroundColor = 'blue';
+            boxB.textContent = 'PRESS';
             isOn_B = true;
-
+            break;
           case 'solto_b':
-            box.style.backgroundColor = 'red';
-            box.textContent = 'OFF';
+            boxB.style.backgroundColor = 'orange';
+            boxB.textContent = 'SOLTO';
             isOn_B = false;
+            break;
       }
     });
   </script>

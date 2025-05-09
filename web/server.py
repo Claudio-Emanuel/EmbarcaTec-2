@@ -13,18 +13,29 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def index():
     return render_template('index.html')  # Renderiza o template web/templates/index.html
 
-@app.route('/CLICK', methods=['GET', 'POST'])
-def click():
+@app.route('/CLICK_A', methods=['GET', 'POST'])
+def click_a():
     print("Comando: Click")
-    socketio.emit('command', {'action': 'click'})  # Envia comando para ON
-    return 'Click command sent', 200
+    socketio.emit('command', {'action': 'click_a'})  # Envia comando para ON
+    return 'Click_a command sent', 200
 
-@app.route('/SOLTO', methods=['GET', 'POST'])
-def solto():
+@app.route('/CLICK_B', methods=['GET', 'POST'])
+def click_b():
+    print("Comando: Click")
+    socketio.emit('command', {'action': 'click_b'})  # Envia comando para ON
+    return 'Click_b command sent', 200
+
+@app.route('/SOLTO_A', methods=['GET', 'POST'])
+def solto_a():
     print("Comando: solto")
-    socketio.emit('command', {'action': 'solto'})  # Envia comando para OFF
-    return 'solto command sent', 200
+    socketio.emit('command', {'action': 'solto_a'})  # Envia comando para OFF
+    return 'solto_a command sent', 200
 
+@app.route('/SOLTO_B', methods=['GET', 'POST'])
+def solto_b():
+    print("Comando: solto_B")
+    socketio.emit('command', {'action': 'solto_b'})  # Envia comando para OFF
+    return 'solto_b command sent', 200
 
 # Ponto de entrada principal da aplicação
 if __name__ == '__main__':

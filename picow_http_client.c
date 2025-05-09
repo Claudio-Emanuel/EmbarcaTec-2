@@ -4,23 +4,35 @@
 #include "pico/async_context.h"
 #include "lwip/altcp_tls.h"
 #include "example_http_client_util.h"
-#include "buzzer.c"
-// ======================== CONFIG============================== //
-#define HOST "192.168.143.156" // IP DA REDE
+#include "hardware/adc.h"
+// ======================== CONFIG======================================= //
+#define HOST "192.168.2.104" // IP DA REDE
 #define PORT 5000
 #define INTERVALO_MS 500 //INTERVALO PARA ENVIAR MENSAGEM
-#define BUTTON_A 5 //DEFINICAO DO BOTAO A
+#define BUTTON_A 5 //DEFINICAO DO BOTAO A"
 #define BUTTON_B 6 //DEFINICAO DO BOTAO B
 #define LED_RED 13 //DEFINICAO DO LED VERMELHO
 #define LED_BLUE 12 //DEFINICAO DO LED_AZUL
-// ============================================================= //
-
+#define JOY_X 26 //DEFINICAO DO EIXO X DO JOYSTICK
+#define JOY_Y 27 //DEFINICAO DO EIXO Y DO JOYSTICK
+#define MAX_ADC 3000 //VALOR MAXIMO DO ADC
+#define MIN_ADC 1000 //VALOR MINIMO DO ADC
+#define DEADZONE 300 //VALOR DA ZONA MORTA DO ADC
+// ====================================================================== //
+// ========================INICIO DO MAIN================================ //
 int main()
 {
     // Inicializando entradas padrão
     stdio_init_all();
 
-    // Configuração do Pino do Botão
+    // Inicializacao do conversor analogico
+    adc_init();
+
+    // Pinagem do ADC sem pulldown
+    adc_gpio_init(JOY_X); // GPIO 26 como entrada do ADC
+    adc_gpio_init(JOY_Y); // GPIO 27 como entrada do ADC 
+
+// ==Configuração do Pino do Botão== //
     gpio_init(BUTTON_A);
     gpio_set_dir(BUTTON_A, GPIO_IN);
     gpio_pull_up(BUTTON_A);
@@ -61,6 +73,13 @@ int main()
     int button_state_b = 1; // Variável para controlar o estado do botão (1 = solto, 0 = pressionado)
 
     while (1) {
+        adc_select_input(1); // Seleciona o canal 1 do ADC (GPIO 26)
+        uint adc_x_raw= adc_read(); // Lê o valor do ADC
+
+        adc_select_input(0); // Seleciona o canal 2 do ADC (GPIO 27)
+        uint adc_y_raw= adc_read(); // Lê o valor do ADC
+
+
         const char *path = NULL;
 
         // Se o botão A for apertado
@@ -70,7 +89,6 @@ int main()
             {                    // Se o botão estava solto e agora foi pressionado
                 path = "/CLICK_A"; // Envia a mensagem "CLICK"
                 gpio_put(LED_RED, 1);
-                buzzer_alert_tone();
                 button_state_a = 0; // Atualiza o estado para pressionado
             }
         }
@@ -89,7 +107,6 @@ int main()
             {                    // Se o botão estava solto e agora foi pressionado
                 path = "/CLICK_B"; // Envia a mensagem "CLICK"
                 gpio_put(LED_BLUE, 1);
-                buzzer_alert_tone();
                 button_state_b = 0; // Atualiza o estado para pressionado
             }
         }
